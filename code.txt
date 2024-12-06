@@ -1,0 +1,32 @@
+const ytdl = require('ytdl-core');
+const fs = require('fs');
+
+const url = 'https://www.youtube.com/watch?v=EXAMPLE';
+
+const stream = ytdl(url, {
+    filter: 'audioonly', // Extraire uniquement l'audio
+    quality: 'highestaudio', // Meilleure qualité possible
+});
+
+stream.pipe(fs.createWriteStream('audio.opus'))
+    .on('finish', () => console.log('Téléchargement terminé en Opus natif.'));
+
+
+
+
+https://github.com/discordjs/opus
+
+
+
+const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
+
+const connection = joinVoiceChannel({
+    channelId: '1234567890',
+    guildId: '0987654321',
+    adapterCreator: message.guild.voiceAdapterCreator,
+});
+
+const player = createAudioPlayer();
+const resource = createAudioResource('./audio.opus'); // Utilisation directe
+player.play(resource);
+connection.subscribe(player);

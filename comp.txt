@@ -1,0 +1,40 @@
+play:
+- ytdl-core (filter: 'audioonly' / quality: 'highestaudio') => .opus en cache
+- to cache: .opus
+- discord voice => .opus
+
+Do not ENCODE the .opus file, just send it to discord (it's already an audio file format) => lose of quality
+
+
+queue:
+- array of song objects
+- displayed by 10 at each page
+
+
+command list:
+- /play <url> : play a song / playlist / library
+- /skip : skip the current song
+- /stop : stop the current song
+- /resume : resume the current song
+- /pause : pause the current song
+
+- /queue : display the queue
+- /q_clear : clear the queue
+- /q_remove <pos_id> : remove the song at pos_id
+- /q_move <pos_id1> <pos_id2> : move the song at pos_id1 at pos_id2
+- /q_shuffle : shuffle the queue
+
+- /volume <0-100> : set the volume
+
+- /loop : loop the current song or unloop it
+
+- /lib : display the list of libraries
+- /lib_create <unique_name> : create a library
+- /lib_delete <unique_name> : remove the library
+- /lib_add <unique_name> <song_url> : add a song / playlist to the library
+- /lib_remove <unique_name> <song_id> : remove a song from the library
+- /lib_rename <unique_name> <new_name> : rename the library
+
+- /lib_import <json> : import a library from a json file
+- /lib_export <unique_name> : export a library to a json file
+
