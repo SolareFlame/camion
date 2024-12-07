@@ -37,6 +37,24 @@ class QueueManager {
     getQueueSize() {
         return this.queue.length;
     }
+
+    getSong(index) {
+        if (index < 0 || index >= this.queue.length) return null;
+        return this.queue[index];
+    }
+
+    deleteSong(index) {
+        if (index < 0 || index >= this.queue.length) return;
+        this.queue.splice(index, 1);
+    }
+
+    displayQueue() {
+        let queueString = 'File d\'attente:\n';
+        this.queue.forEach((song, index) => {
+            queueString += `${index + 1}. ${song.title}\n`;
+        });
+        return queueString;
+    }
 }
 
 module.exports = QueueManager;
