@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { joinVoiceChannel } = require('@discordjs/voice');
 const PlayerManager = require("../utils/PlayerManager");
 const Song = require("../utils/Song");
+const QueueManager = require("../utils/QueueManager");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,23 +15,32 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        const url = interaction.options.getString('url');
+        let url = interaction.options.getString('url').split("&")[0];
         const guildId = interaction.guild.id;
         const channel = interaction.member.voice.channel;
 
         if (!url.includes('youtube') && !url.includes('youtu.be')) return interaction.reply('URL invalide !');
         if (!channel) return interaction.reply('Vous devez être dans un salon vocal !');
 
-        let player = null;
+        let player = global.player;
+
         if (!player) {
-            player = new PlayerManager();
+            player = global.player = new PlayerManager();
             console.log('Player created');
             player.connect(channel);
         }
 
-        song = new Song("e", "ee", 1, "https://www.youtube.com/watch?v=_t0Q5zJgOCI");
-        player.playSong(song);
+        let song = new Song("e", "ee", 1, url);
 
-        await interaction.reply(`Ajouté à la queue : ${url}`);
+        if(player.state === PlayerManager.STATE.PLAYING){
+            player.queue.addToQueue(song);
+        }
+
+        if (player.state === PlayerManager.STATE.IDLE && player.queue.getQueueSize() === 0) {
+            player.playSong(song);
+            player.state = PlayerManager.STATE.PLAYING;
+        }
+
+        if(interaction) return interaction.reply(player.queue.displayQueue());
     },
 };
