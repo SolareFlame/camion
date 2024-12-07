@@ -12,7 +12,7 @@ queue:
 
 
 command list:
-- /play <url> : play a song / playlist / library
+- /play <url> : play a song / playlist / library (next / now)
 - /skip : skip the current song
 - /stop : stop the current song
 - /resume : resume the current song
