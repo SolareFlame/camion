@@ -55,6 +55,10 @@ class QueueManager {
         });
         return queueString;
     }
+
+    nextSong() {
+        return this.queue.shift();
+    }
 }
 
 module.exports = QueueManager;

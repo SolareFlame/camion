@@ -1,25 +1,46 @@
+const SongDataExtractor = require('./SongDataExtractor');
+
 class Song {
-    constructor (title, artist, duration, url) {
-        this.title = title
-        this.artist = artist
-        this.duration = duration //en secondes
-        this.url = url
+    constructor(url) {
+        this.url = url;
+        this.title = '';
+        this.artist = '';
+        this.duration = 0;
+        this.thumbnail = '';
     }
 
-    getName () {
-        return this.title
+    getName() {
+        return this.title;
     }
 
-    getArtist () {
-        return this.artist
+    getArtist() {
+        return this.artist;
     }
 
-    getDuration () {
-        return this.duration
+    getDuration() {
+        return this.duration;
     }
 
-    getUrl () {
-        return this.url
+    getUrl() {
+        return this.url;
+    }
+
+    /**t
+     * Met à jour les détails du Song en utilisant SongDataExtractor.
+     * @returns {Promise<void>}
+     */
+    async update() {
+        try {
+            const details = await SongDataExtractor.extractDetails(this);
+            this.title = details.title;
+            this.artist = details.artist;
+            this.duration = details.duration;
+            this.thumbnail = details.thumbnail;
+
+            console.log(`Mise à jour réussie : ${this.title} par ${this.artist}, durée ${this.duration}`);
+        } catch (error) {
+            console.error(`Erreur lors de la mise à jour du Song : ${error}`);
+        }
     }
 }
 

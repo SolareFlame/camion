@@ -12,33 +12,107 @@ class PlayerManager {
 
     constructor() {
         this.song = null;
-        this.state = PlayerManager.STATE.IDLE;
         this.connection = null;
-        this.player = createAudioPlayer();
         this.queue = new QueueManager();
 
+        this.state = PlayerManager.STATE.IDLE;
+        this.player = createAudioPlayer();
+
+        // Event listeners
         this.player.on(AudioPlayerStatus.Playing, () => {
-            console.log("La lecture a commencé.");
+            this.state = PlayerManager.STATE.PLAYING;
         });
 
         this.player.on(AudioPlayerStatus.Idle, () => {
-            console.log("Le player est inactif.");
-
-            this.state = PlayerManager.STATE.IDLE;
-            if (this.queue.getQueueSize() > 0) {
-                const nextSong = this.queue.getSong(0);
-                this.queue.deleteSong(0);
-                this.playSong(nextSong);
+            if(this.state !== PlayerManager.STATE.IDLE) {
+                this.state = PlayerManager.STATE.IDLE;
+                this.playSong(this.queue.nextSong());
             }
         });
     }
 
-    getSong() {
-        return this.song;
+    static getPlayer() {
+        if (!PlayerManager.instance || PlayerManager.instance === null) {
+            PlayerManager.instance = new PlayerManager();
+            console.log('Nouvelle instance de PlayerManager créée.');
+        }
+        return PlayerManager.instance;
     }
 
-    setSong(song) {
-        this.song = song;
+
+    // Primordial Interaction
+    async playSong(song) {
+        if (!this.connection) {
+            console.error('Vous devez être connecté à un canal vocal pour jouer de la musique.');
+            return;
+        }
+        if (this.state === PlayerManager.STATE.PLAYING) {
+            console.log('Une chanson est déjà en cours de lecture.');
+            return;
+        }
+
+        console.log('Lecture de la chanson: ' + song.url);
+
+        try {
+            const { createAudioResourceFromSong } = await import("./AudioManager.mjs");
+            const resource = await createAudioResourceFromSong(song);
+
+            if (!resource) {
+                console.error('Impossible de créer la ressource audio.');
+                return;
+            }
+
+            this.song = song;
+            this.connection.subscribe(this.player);
+            this.player.play(resource);
+
+            console.log(`Lecture de la chanson: ${song.title}`);
+        } catch (error) {
+            console.error('Erreur lors de la lecture de la chanson :', error);
+        }
+    }
+
+    pauseSong() {
+        if (this.state === PlayerManager.STATE.PLAYING) {
+            this.player.pause();
+            this.state = PlayerManager.STATE.PAUSED;
+            console.log('Musique en pause');
+        } else {
+            console.log('Impossible de mettre en pause, aucune musique en lecture.');
+        }
+    }
+
+    resumeSong() {
+        if (this.state === PlayerManager.STATE.PAUSED) {
+            this.player.unpause();
+            this.state = PlayerManager.STATE.PLAYING;
+            console.log('Musique reprise');
+        } else {
+            console.log('Impossible de reprendre, aucune musique n\'est en pause.');
+        }
+    }
+
+    stopSong() {
+        if (this.state === PlayerManager.STATE.PLAYING) {
+            this.player.stop();
+            this.state = PlayerManager.STATE.IDLE;
+            console.log('Musique sautée');
+        } else {
+            console.log('Impossible de sauter, aucune musique en lecture.');
+        }
+    }
+
+
+    // Connect Gestion
+    disconnect() {
+        if (this.connection) {
+            this.connection.destroy();
+            this.connection = null;
+        }
+        this.player.stop();
+        this.song = null;
+        this.state = PlayerManager.STATE.IDLE;
+        console.log('Déconnecté du canal vocal.');
     }
 
     connect(channel) {
@@ -63,91 +137,18 @@ class PlayerManager {
         });
     }
 
-    async playSong(song) {
 
-        console.log(this.state);
-
-        if (!this.connection) {
-            console.error('Vous devez être connecté à un canal vocal pour jouer de la musique.');
-            return;
-        }
-
-        if (this.state === PlayerManager.STATE.PLAYING) {
-            console.log('Une chanson est déjà en cours de lecture.');
-            return;
-        }
-
-        try {
-            const { createAudioResourceFromSong } = await import("./AudioManager.mjs");
-            const resource = await createAudioResourceFromSong(song);
-
-            if (!resource) {
-                console.error('Impossible de créer la ressource audio.');
-                return;
-            }
-
-            this.song = song;
-            this.connection.subscribe(this.player);
-            this.player.play(resource);
-
-            console.log(`Lecture de la chanson: ${song.title}`);
-        } catch (error) {
-            console.error('Erreur lors de la lecture de la chanson :', error);
-        }
+    // Getters
+    getSong() {
+        return this.song;
     }
 
-    pause() {
-        if (this.state === PlayerManager.STATE.PLAYING) {
-            this.player.pause();
-            this.state = PlayerManager.STATE.PAUSED;
-            console.log('Musique en pause');
-        } else {
-            console.log('Impossible de mettre en pause, aucune musique en lecture.');
-        }
-    }
-
-    resume() {
-        if (this.state === PlayerManager.STATE.PAUSED) {
-            this.player.unpause();
-            this.state = PlayerManager.STATE.PLAYING;
-            console.log('Musique reprise');
-        } else {
-            console.log('Impossible de reprendre, aucune musique n\'est en pause.');
-        }
-    }
-
-    stop() {
-        if (this.state !== PlayerManager.STATE.IDLE) {
-            this.player.stop();
-            this.state = PlayerManager.STATE.IDLE;
-            console.log('Musique arrêtée');
-
-            if (this.connection) {
-                this.connection.destroy();
-                console.log('Déconnexion du canal vocal');
-                this.connection = null;
-            }
-        } else {
-            console.log('Aucune musique à arrêter.');
-        }
-    }
-
-
-    skip() {
-        if (this.state === PlayerManager.STATE.PLAYING) {
-            this.player.stop();
-            this.state = PlayerManager.STATE.IDLE;
-            console.log('Musique sautée');
-        } else {
-            console.log('Impossible de sauter, aucune musique en lecture.');
-        }
+    setSong(song) {
+        this.song = song;
     }
 
 
 
-    isAlreadyPlaying() {
-        return this.state === PlayerManager.STATE.PLAYING;
-    }
 }
 
 module.exports = PlayerManager;
