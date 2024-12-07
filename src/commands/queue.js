@@ -10,7 +10,8 @@ module.exports = {
         .setDescription('Affiche la file d\'attente de la musique'),
 
     async execute(interaction) {
-        const queue = global.queue;
+        let playerManager = PlayerManager.getPlayer();
+        let queue = playerManager.queue;
 
         if (!queue || queue.getQueueSize() === 0) {
             return interaction.reply('La file d\'attente est vide.');
