@@ -17,6 +17,7 @@ command list:
 - /stop : stop the current song
 - /resume : resume the current song
 - /pause : pause the current song
+- /disconnect : disconnect the bot
 
 - /queue : display the queue
 - /q_clear : clear the queue
