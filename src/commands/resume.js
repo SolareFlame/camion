@@ -10,9 +10,8 @@ module.exports = {
         let playerManager = PlayerManager.getPlayer();
 
         if(playerManager.state === PlayerManager.STATE.PAUSED){
-            playerManager.resumeSong();
+            await interaction.deferReply({ephemeral: false});
+            playerManager.resumeSong(interaction);
         }
-
-        if(interaction) return interaction.reply('La musique est en pause.');
     },
 };

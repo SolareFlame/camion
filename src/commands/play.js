@@ -4,6 +4,7 @@ const { EmbedBuilder } = require('discord.js');  // Assurez-vous d'importer Embe
 const PlayerManager = require("../utils/PlayerManager");
 const Song = require("../utils/Song");
 const PlaylistExtractor = require("../utils/PlaylistExtractor");
+const PlayerMessage = require("../utils/PlayerMessage");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,79 +21,23 @@ module.exports = {
         const channel = interaction.member.voice.channel;
 
         if (!url.includes('youtube') && !url.includes('youtu.be')) {
-            return interaction.reply({ content: 'URL invalide !', ephemeral: true });
+            return interaction.reply({content: 'URL invalide !', ephemeral: true});
         }
         if (!channel) {
-            return interaction.reply({ content: 'Vous devez être dans un salon vocal !', ephemeral: true });
+            return interaction.reply({content: 'Vous devez être dans un salon vocal !', ephemeral: true});
         }
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply({ephemeral: false});
 
         let playerManager = await PlayerManager.getPlayer();
+
+        let playerMessage = new PlayerMessage();
+        playerMessage.setInterraction(interaction);
+        playerMessage.setChannel(interaction.channel);
+
+        playerManager.message = playerMessage;
         playerManager.connect(channel);
 
-        try {
-            if (url.includes('playlist')) {
-                const videoLinks = await PlaylistExtractor.getPlaylistLinks(url);
-
-                if (playerManager.state === PlayerManager.STATE.IDLE && playerManager.queue.getQueueSize() === 0) {
-                    let song = new Song(videoLinks.shift());
-
-                    console.log(`DIRECT PLAY : ${song.url}`);
-
-                    playerManager.playSong(song);
-                    await song.update();
-
-                    setTimeout(() => {
-                        interaction.editReply({
-                            embeds: [
-                                new EmbedBuilder()
-                                    .setTitle(`${song.artist} - ${song.title}`)
-                                    .setColor('#00FF00')
-                                    .setDescription(`Durée: ${song.duration}`)
-                                    .setThumbnail(song.thumbnail)
-                            ]
-                        });
-                    }, 3000);
-                }
-
-                for (const link of videoLinks) {
-                    let song = new Song(link);
-                    song.update();
-                    console.log(`Ajout de la chanson à la queue : ${song.url}`);
-                    playerManager.queue.addToQueue(song);
-
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                }
-
-            } else {
-                let song = new Song(url);
-
-                if (playerManager.state === PlayerManager.STATE.PLAYING) {
-                    playerManager.queue.addToQueue(song);
-                }
-
-                if (playerManager.state === PlayerManager.STATE.IDLE && playerManager.queue.getQueueSize() === 0) {
-                    playerManager.playSong(song);
-                }
-
-                await song.update();
-
-                setTimeout(() => {
-                    interaction.editReply({
-                        embeds: [
-                            new EmbedBuilder()
-                                .setTitle(`${song.artist} - ${song.title}`)
-                                .setColor('#00FF00')
-                                .setDescription(`Durée: ${song.duration}`)
-                                .setThumbnail(song.thumbnail)
-                        ]
-                    });
-                }, 3000);
-            }
-        } catch (error) {
-            console.error("Erreur lors de la récupération de la playlist ou du traitement de la chanson :", error);
-            return interaction.reply({ content: "Impossible de récupérer la playlist ou de jouer la chanson !", ephemeral: true });
-        }
+        await playerManager.preparePlaying(url);
     },
 };
