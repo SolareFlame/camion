@@ -48,16 +48,34 @@ class QueueManager {
         this.queue.splice(index, 1);
     }
 
-    displayQueue() {
-        let queueString = 'File d\'attente:\n';
-        this.queue.forEach((song, index) => {
-            queueString += `${index + 1}. ${song.title}\n`;
-        });
+    displayQueue(page) {
+        let queueString = '';
+
+        const pageSize = Math.min(10, this.queue.length - (page - 1) * 10);
+        const startIndex = (page - 1) * 10;
+
+        for (let i = startIndex; i < startIndex + pageSize; i++) {
+            const song = this.queue[i];
+
+            if(song.duration === 0) {
+                queueString += `${i + 1}. \`${song.url}\` (loading).\n`;
+            } else {
+                queueString += `${i + 1}. [${song.title}](${song.url}) (${song.duration}).\n`;
+            }
+        }
         return queueString;
+    }
+
+    getPageCount() {
+        return Math.ceil(this.queue.length / 10);
     }
 
     nextSong() {
         return this.queue.shift();
+    }
+
+    isEmpty() {
+        return this.queue.length === 0;
     }
 }
 
