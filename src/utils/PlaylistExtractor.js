@@ -6,7 +6,7 @@ class PlaylistExtractor {
      * @param {string} playlistUrl L'URL de la playlist YouTube.
      * @returns {Promise<string[]>} Une promesse contenant une liste d'URLs de vidéos.
      */
-    static async getPlaylistLinks(playlistUrl) {
+    static async getPlaylistURLs(playlistUrl) {
         return new Promise((resolve, reject) => {
             const process = spawn('yt-dlp', ['--flat-playlist', '-J', playlistUrl]);
 
