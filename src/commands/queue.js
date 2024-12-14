@@ -16,14 +16,14 @@ module.exports = {
         }
 
         let currentPage = 1;
-        let isProcessing = false; // Flag pour éviter le spam
+        let isProcessing = false;
 
         const updateEmbed = (page) => {
             const queueString = queue.displayQueue(page);
             return new EmbedBuilder()
                 .setTitle('File d\'attente')
                 .setDescription(queueString)
-                .setColor('#1DB954')
+                .setColor('#FF0033')
                 .setFooter({ text: `Page ${page} sur ${queue.getPageCount()}` });
         };
 
