@@ -36,7 +36,9 @@ class PlayerManager {
                 if(this.loop){
                     this.playSong(this.song);
                 } else {
-                    this.playSong(this.queue.nextSong());
+                    if(!this.queue.isEmpty()){
+                        this.playSong(this.queue.nextSong());
+                    }
                 }
             }
         });
@@ -61,7 +63,7 @@ class PlayerManager {
              return;
          }
          console.log('Lecture de la chanson: ' + song.url);
-         await this.message.replyPlay(song, this.getProgress());
+         await this.message.replyPlay(song, this.getProgress(), false, this.loop);
 
          try {
              const {createAudioResourceFromSong} = await import("./AudioManager.mjs");
@@ -90,7 +92,7 @@ class PlayerManager {
             this.state = PlayerManager.STATE.PAUSED;
 
             this.message.interraction = interaction;
-            this.message.replyPlay(this.song, time);
+            this.message.replyPlay(this.song, time, true, this.loop);
         } else {
             console.log('Impossible de mettre en pause, aucune musique en lecture.');
         }
@@ -103,7 +105,7 @@ class PlayerManager {
             console.log('Musique reprise');
 
             this.message.interraction = interaction;
-            this.message.replyPlay(this.song, this.getProgress());
+            this.message.replyPlay(this.song, this.getProgress(), false, this.loop);
         } else {
             console.log('Impossible de reprendre, aucune musique n\'est en pause.');
         }

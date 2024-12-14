@@ -42,6 +42,12 @@ client.once('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
+    if(interaction.isButton()) {
+        const buttonManager = require("./utils/ButtonManager");
+        await buttonManager.execute(interaction);
+
+        console.log("Button clicked");
+    }
     if (!interaction.isCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
