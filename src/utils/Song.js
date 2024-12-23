@@ -9,22 +9,6 @@ class Song {
         this.thumbnail = '';
     }
 
-    getName() {
-        return this.title;
-    }
-
-    getArtist() {
-        return this.artist;
-    }
-
-    getDuration() {
-        return this.duration;
-    }
-
-    getUrl() {
-        return this.url;
-    }
-
     /**t
      * Met à jour les détails du Song en utilisant SongDataExtractor.
      * @returns {Promise<void>}

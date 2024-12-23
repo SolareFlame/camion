@@ -43,7 +43,7 @@ client.once('ready', async () => {
 
 client.on('interactionCreate', async (interaction) => {
     if(interaction.isButton()) {
-        const buttonManager = require("./utils/ButtonManager");
+        const buttonManager = require("./embed/ButtonManager");
         await buttonManager.execute(interaction);
 
         console.log("Button clicked");

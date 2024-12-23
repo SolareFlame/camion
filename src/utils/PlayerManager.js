@@ -3,7 +3,7 @@ const { VoiceChannel, EmbedBuilder} = require("discord.js");
 const QueueManager = require("./QueueManager");
 const PlaylistExtractor = require("./PlaylistExtractor");
 const Song = require("./Song");
-const PlayerMessage = require("./PlayerMessage");
+const PlayerMessage = require("../embed/PlayerEmbed");
 
 class PlayerManager {
     static STATE = Object.freeze({
@@ -66,7 +66,7 @@ class PlayerManager {
          await this.message.replyPlay(song, this.getProgress(), false, this.loop);
 
          try {
-             const {createAudioResourceFromSong} = await import("./AudioManager.mjs");
+             const {createAudioResourceFromSong} = await import("../audio/AudioManager.mjs");
              const resource = await createAudioResourceFromSong(song);
 
              if (!resource) {

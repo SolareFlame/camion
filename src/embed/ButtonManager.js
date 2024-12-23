@@ -1,11 +1,11 @@
 const { joinVoiceChannel, createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus } = require('@discordjs/voice');
 const { VoiceChannel, EmbedBuilder} = require("discord.js");
-const QueueManager = require("./QueueManager");
-const PlaylistExtractor = require("./PlaylistExtractor");
-const Song = require("./Song");
-const PlayerMessage = require("./PlayerMessage");
+const QueueManager = require("../utils/QueueManager");
+const PlaylistExtractor = require("../utils/PlaylistExtractor");
+const Song = require("../utils/Song");
+const PlayerMessage = require("./PlayerEmbed");
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const PlayerManager = require("./PlayerManager");
+const PlayerManager = require("../utils/PlayerManager");
 
 module.exports = {
     async execute(interaction) {

@@ -4,7 +4,7 @@ const { EmbedBuilder } = require('discord.js');  // Assurez-vous d'importer Embe
 const PlayerManager = require("../utils/PlayerManager");
 const Song = require("../utils/Song");
 const PlaylistExtractor = require("../utils/PlaylistExtractor");
-const PlayerMessage = require("../utils/PlayerMessage");
+const PlayerMessage = require("../embed/PlayerEmbed");
 
 module.exports = {
     data: new SlashCommandBuilder()

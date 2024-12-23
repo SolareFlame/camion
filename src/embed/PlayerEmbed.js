@@ -1,6 +1,6 @@
 const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle} = require("discord.js");
 
-class PlayerMessage {
+class PlayerEmbed {
     static STATE = Object.freeze({
         PLAYING_START : '<:playing_start:1315319232493523035>',
         PLAYED_START : '<:played_start:1315317278669017109>',
@@ -52,25 +52,25 @@ class PlayerMessage {
         console.log("SONG DURATION : " + song_duration_in_sec);
 
         //start
-        if (pos_cursor < 1) desc += PlayerMessage.STATE.PLAYING_START;
-        else desc += PlayerMessage.STATE.PLAYED_START;
+        if (pos_cursor < 1) desc += PlayerEmbed.STATE.PLAYING_START;
+        else desc += PlayerEmbed.STATE.PLAYED_START;
 
         //played
         for (let i = 0; i < pos_cursor - 1; i++) {
-            desc += PlayerMessage.STATE.PLAYED;
+            desc += PlayerEmbed.STATE.PLAYED;
         }
 
         //playing
-        if (pos_cursor > 0 && pos_cursor < 9) desc += PlayerMessage.STATE.PLAYING;
+        if (pos_cursor > 0 && pos_cursor < 9) desc += PlayerEmbed.STATE.PLAYING;
 
         //not played
         for (let i = pos_cursor; i < 9; i++) {
-            desc += PlayerMessage.STATE.NOT_PLAYED;
+            desc += PlayerEmbed.STATE.NOT_PLAYED;
         }
 
         //end
-        if (pos_cursor < 9) desc += PlayerMessage.STATE.NOT_PLAYED_END;
-        else desc += PlayerMessage.STATE.PLAYED_END;
+        if (pos_cursor < 9) desc += PlayerEmbed.STATE.NOT_PLAYED_END;
+        else desc += PlayerEmbed.STATE.PLAYED_END;
 
         desc += "  (" + song_duration_in_sec + ")";
 
@@ -93,14 +93,14 @@ class PlayerMessage {
                 new ButtonBuilder()
                     .setCustomId("resume")
                     .setStyle(ButtonStyle.Danger)
-                    .setEmoji(PlayerMessage.STATE.BTN_RESUME)
+                    .setEmoji(PlayerEmbed.STATE.BTN_RESUME)
             );
         } else {
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId("pause")
                     .setStyle(ButtonStyle.Danger)
-                    .setEmoji(PlayerMessage.STATE.BTN_PAUSE)
+                    .setEmoji(PlayerEmbed.STATE.BTN_PAUSE)
             );
         }
 
@@ -108,21 +108,21 @@ class PlayerMessage {
             new ButtonBuilder()
                 .setCustomId("next")
                 .setStyle(ButtonStyle.Danger)
-                .setEmoji(PlayerMessage.STATE.BTN_NEXT)
+                .setEmoji(PlayerEmbed.STATE.BTN_NEXT)
         );
 
         buttons.addComponents(
             new ButtonBuilder()
                 .setCustomId("stop")
                 .setStyle(ButtonStyle.Danger)
-                .setEmoji(PlayerMessage.STATE.BTN_STOP)
+                .setEmoji(PlayerEmbed.STATE.BTN_STOP)
         );
 
         buttons.addComponents(
             new ButtonBuilder()
                 .setCustomId("shuffle")
                 .setStyle(ButtonStyle.Danger)
-                .setEmoji(PlayerMessage.STATE.BTN_SHUFFLE)
+                .setEmoji(PlayerEmbed.STATE.BTN_SHUFFLE)
         );
 
         if (loop) {
@@ -130,14 +130,14 @@ class PlayerMessage {
                 new ButtonBuilder()
                     .setCustomId("unloop")
                     .setStyle(ButtonStyle.Danger)
-                    .setEmoji(PlayerMessage.STATE.BTN_UNLOOP)
+                    .setEmoji(PlayerEmbed.STATE.BTN_UNLOOP)
             );
         } else {
             buttons.addComponents(
                 new ButtonBuilder()
                     .setCustomId("loop")
                     .setStyle(ButtonStyle.Danger)
-                    .setEmoji(PlayerMessage.STATE.BTN_LOOP)
+                    .setEmoji(PlayerEmbed.STATE.BTN_LOOP)
             );
         }
 
@@ -192,4 +192,4 @@ function convertDurationToSeconds(duration) {
     return minutes * 60 + seconds;
 }
 
-module.exports = PlayerMessage;
+module.exports = PlayerEmbed;
