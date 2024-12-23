@@ -1,6 +1,9 @@
 import { spawn } from 'child_process';
 import { createAudioResource, StreamType } from '@discordjs/voice';
-import { Readable } from 'stream';
+import { PassThrough } from 'stream';
+
+let lastErrorYtDlp = null;
+let lastErrorFFmpeg = null;
 
 /**
  * Crée une ressource audio à partir d'une chanson donnée.
@@ -10,50 +13,60 @@ import { Readable } from 'stream';
 export async function createAudioResourceFromSong(song) {
     try {
         console.log(`Création de la ressource audio pour : ${song.url}`);
-        const audioBuffer = await downloadAudioToBuffer(song.url);
 
-        const resource = createAudioResource(Readable.from(audioBuffer), {
+        const audioStream = new PassThrough();
+        const ytDlpProcess = spawn('yt-dlp', ['-o', '-', '-f', 'bestaudio[ext=webm]', song.url]);
+
+        ytDlpProcess.stderr.on('data', (data) => {
+            const errorMessage = data.toString().trim();
+            if (errorMessage !== lastErrorYtDlp) {
+                console.error(`YT-DLP : ${errorMessage}`);
+                lastErrorYtDlp = errorMessage;
+            }
+        });
+
+        ytDlpProcess.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`yt-dlp s'est terminé avec le code ${code}`);
+                audioStream.end();
+            }
+        });
+
+
+        const ffmpegProcess = spawn('ffmpeg', [
+            '-i', 'pipe:0',
+            '-c:a', 'libopus',
+            '-b:a', '128k',
+            '-f', 'webm',
+            'pipe:1',
+        ]);
+
+        ytDlpProcess.stdout.pipe(ffmpegProcess.stdin);
+        ffmpegProcess.stdout.pipe(audioStream);
+
+        ffmpegProcess.stderr.on('data', (data) => {
+            const errorMessage = data.toString().trim();
+            if (errorMessage !== lastErrorFFmpeg) {
+                console.error(`FFMPEG : ${errorMessage}`);
+                lastErrorFFmpeg = errorMessage;
+            }
+        });
+
+        ffmpegProcess.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`FFmpeg s'est terminé avec le code ${code}`);
+                audioStream.end();
+            }
+        });
+
+        const resource = createAudioResource(audioStream, {
             inputType: StreamType.WebmOpus,
         });
 
-        console.log('Ressource audio créée avec succès.');
+        console.log('Ressource audio en streaming créée avec succès.');
         return resource;
     } catch (error) {
         console.error('Erreur lors de la création de la ressource audio :', error);
         throw error;
     }
-}
-
-/**
- * Télécharge l'audio d'une URL dans un buffer.
- * @param {string} url - L'URL de l'audio.
- * @returns {Promise<Buffer>} - Retourne un buffer contenant les données audio.
- */
-async function downloadAudioToBuffer(url) {
-    console.log(`Téléchargement de l'audio depuis : ${url}`);
-    return new Promise((resolve, reject) => {
-        const audioBuffer = [];
-        const process = spawn('yt-dlp', ['--format', 'bestaudio[ext=webm]', '-o', '-', url]);
-
-        process.stdout.on('data', (chunk) => {
-            audioBuffer.push(chunk);
-        });
-
-        process.stderr.on('data', (data) => {
-            console.error(`${data}`);
-        });
-
-        process.on('close', (code) => {
-            if (code === 0) {
-                console.log('Téléchargement réussi.');
-                resolve(Buffer.concat(audioBuffer));
-            } else {
-                reject(new Error(`yt-dlp s'est terminé avec le code ${code}`));
-            }
-        });
-
-        process.on('error', (error) => {
-            reject(new Error(`Erreur lors du lancement de yt-dlp : ${error.message}`));
-        });
-    });
 }
