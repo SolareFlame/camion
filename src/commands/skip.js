@@ -6,12 +6,12 @@ module.exports = {
         .setName('skip')
         .setDescription('skip the current song'),
 
-    async execute(interaction) {
+    async execute(interaction){
         let playerManager = PlayerManager.getPlayer();
 
         playerManager.stopSong();
-        playerManager.playSong(playerManager.queue.nextSong());
+        await playerManager.playSong(playerManager.queue.nextSong());
 
-        if(interaction) return interaction.reply('La musique a été passée.');
+        if(interaction) interaction.reply('La musique a été passée.');
     },
 };

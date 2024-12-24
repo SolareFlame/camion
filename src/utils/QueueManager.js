@@ -1,10 +1,10 @@
+const Song = require('./Song');
+
 class QueueManager {
+    #queue;
+
     constructor() {
         this.queue = [];
-    }
-
-    getQueue() {
-        return this.queue;
     }
 
     addToQueue(song) {
@@ -16,39 +16,39 @@ class QueueManager {
         this.queue.splice(index, 1);
     }
 
-    clearQueue() {
+    clearQueue(){
         this.queue = [];
     }
 
-    moveInQueue(from, to) {
+    moveInQueue(from, to)  {
         if (from < 1 || from > this.queue.length || to < 1 || to > this.queue.length) return;
 
         const [song] = this.queue.splice(from - 1, 1);
         this.queue.splice(to - 1, 0, song);
     }
 
-    shuffleQueue() {
+    shuffleQueue()  {
         for (let i = this.queue.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [this.queue[i], this.queue[j]] = [this.queue[j], this.queue[i]];
         }
     }
 
-    getQueueSize() {
+    getQueueSize(){
         return this.queue.length;
     }
 
-    getSong(index) {
+    getSong(index)  {
         if (index < 0 || index >= this.queue.length) return null;
         return this.queue[index];
     }
 
-    deleteSong(index) {
+    deleteSong(index){
         if (index < 0 || index >= this.queue.length) return;
         this.queue.splice(index, 1);
     }
 
-    displayQueue(page) {
+    displayQueue(page){
         let queueString = '';
 
         const pageSize = Math.min(10, this.queue.length - (page - 1) * 10);
@@ -71,6 +71,7 @@ class QueueManager {
     }
 
     nextSong() {
+        if(this.isEmpty()) return null;
         return this.queue.shift();
     }
 

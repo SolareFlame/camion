@@ -6,12 +6,13 @@ module.exports = {
         .setName('pause')
         .setDescription('pause the current song'),
 
-    async execute(interaction) {
+    execute(interaction ) {
         let playerManager = PlayerManager.getPlayer();
 
-        if(playerManager.state === PlayerManager.STATE.PLAYING){
-            await interaction.deferReply({ephemeral: false});
-            playerManager.pauseSong(interaction);
+        if(playerManager.status() === 'paused') {
+            interaction.reply('The song is already paused');
         }
+
+        playerManager.pauseSong();
     },
 };

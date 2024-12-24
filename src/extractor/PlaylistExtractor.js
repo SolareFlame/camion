@@ -1,14 +1,14 @@
-const { spawn } = require('child_process');
+const Song = require('../utils/Song');
 
 class PlaylistExtractor {
     /**
      * Extrait les URLs de vidéos d'une playlist YouTube.
-     * @param {string} playlistUrl L'URL de la playlist YouTube.
      * @returns {Promise<string[]>} Une promesse contenant une liste d'URLs de vidéos.
+     * @param url
      */
-    static async getPlaylistURLs(playlistUrl) {
+    static async getPlaylistURLs(url) {
         return new Promise((resolve, reject) => {
-            const process = spawn('yt-dlp', ['--flat-playlist', '-J', playlistUrl]);
+            const process = spawn('yt-dlp', ['--flat-playlist', '-J', url]);
 
             let output = '';
             let error = '';
@@ -41,3 +41,6 @@ class PlaylistExtractor {
 }
 
 module.exports = PlaylistExtractor;
+
+
+

@@ -1,4 +1,4 @@
-const SongDataExtractor = require('./SongDataExtractor');
+const SongDataExtractor = require('../extractor/SongDataExtractor');
 
 class Song {
     constructor(url) {

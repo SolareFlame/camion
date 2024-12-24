@@ -1,7 +1,7 @@
 const { joinVoiceChannel, createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus } = require('@discordjs/voice');
 const { VoiceChannel, EmbedBuilder} = require("discord.js");
 const QueueManager = require("../utils/QueueManager");
-const PlaylistExtractor = require("../utils/PlaylistExtractor");
+const PlaylistExtractor = require("../extractor/PlaylistExtractor");
 const Song = require("../utils/Song");
 const PlayerMessage = require("./PlayerEmbed");
 const {SlashCommandBuilder} = require("@discordjs/builders");

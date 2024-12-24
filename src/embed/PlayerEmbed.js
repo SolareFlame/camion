@@ -165,7 +165,6 @@ class PlayerEmbed {
         }
     }
 
-
     async replyAddQueue(nb) {
         let embed = new EmbedBuilder()
             .setTitle(nb + " pistes ajoutées à la file d'attente")

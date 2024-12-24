@@ -6,12 +6,13 @@ module.exports = {
         .setName('resume')
         .setDescription('resume the current song'),
 
-    async execute(interaction) {
+    execute(interaction){
         let playerManager = PlayerManager.getPlayer();
 
-        if(playerManager.state === PlayerManager.STATE.PAUSED){
-            await interaction.deferReply({ephemeral: false});
-            playerManager.resumeSong(interaction);
+        if(playerManager.status() === 'playing') {
+            interaction.reply('The song is already playing');
         }
+
+        playerManager.resumeSong();
     },
 };

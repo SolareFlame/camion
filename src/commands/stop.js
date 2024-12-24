@@ -6,11 +6,11 @@ module.exports = {
         .setName('stop')
         .setDescription('stop the current song'),
 
-    async execute(interaction) {
+    execute(interaction){
         let playerManager = PlayerManager.getPlayer();
 
         playerManager.stopSong();
 
-        if(interaction) return interaction.reply('La musique a été stoppée.');
+        if(interaction) interaction.reply('La musique a été stoppée.');
     },
 };
