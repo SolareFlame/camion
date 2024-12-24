@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { joinVoiceChannel } = require('@discordjs/voice');
-const { EmbedBuilder } = require('discord.js');  // Assurez-vous d'importer EmbedBuilder
+const { EmbedBuilder } = require('discord.js');
 const PlayerManager = require("../utils/PlayerManager");
 const Song = require("../utils/Song");
 const PlaylistExtractor = require("../utils/PlaylistExtractor");
@@ -14,10 +14,23 @@ module.exports = {
             option.setName('url')
                 .setDescription('youtube url')
                 .setRequired(true)
+        )
+        .addStringOption(option =>
+            option.setName('when')
+                .setDescription('When to play the song')
+                .setRequired(false)
+                .addChoices(
+                    { name: 'now', value: 'now' },
+                    { name: 'next', value: 'next' },
+                    { name: 'last', value: 'last' }
+                )
         ),
+
 
     async execute(interaction) {
         let url = interaction.options.getString('url').split("&")[0];
+        let when = interaction.options.getString('when') || 'last';
+
         const channel = interaction.member.voice.channel;
 
         if (!url.includes('youtube') && !url.includes('youtu.be')) {
@@ -38,6 +51,6 @@ module.exports = {
         playerManager.message = playerMessage;
         playerManager.connect(channel);
 
-        await playerManager.preparePlaying(url);
+        await playerManager.preparePlaying(url, when);
     },
 };
