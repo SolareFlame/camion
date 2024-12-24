@@ -17,8 +17,8 @@ module.exports = {
 
 
     async execute(interaction) {
-        let playerManager = PlayerManager.getPlayer();
-        let queue = playerManager.queue;
+        let PlayerManager = PlayerManager.getPlayer();
+        let queue = PlayerManager.queue;
 
         const move = interaction.options.getInteger('move');
         const to = interaction.options.getInteger('to');

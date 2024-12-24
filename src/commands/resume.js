@@ -7,12 +7,12 @@ module.exports = {
         .setDescription('resume the current song'),
 
     execute(interaction){
-        let playerManager = PlayerManager.getPlayer();
+        let PlayerManager = PlayerManager.getPlayer();
 
-        if(playerManager.status() === 'playing') {
+        if(PlayerManager.status() === 'playing') {
             interaction.reply('The song is already playing');
         }
 
-        playerManager.resumeSong();
+        PlayerManager.resumeSong();
     },
 };

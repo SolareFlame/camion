@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const PlayerManager = require("../utils/PlayerManager");
+const Song = require("../utils/Song");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,7 +42,9 @@ module.exports = {
         await interaction.deferReply({ephemeral: false});
 
         // Connect
-        PlayerManager.getPlayer().connect(channel);
-        await PlayerManager.getPlayer().playSong(new Song(url));
+        let PlayerManager = PlayerManager.getPlayer();
+
+        PlayerManager.connect(channel);
+        await PlayerManager.playSong(new Song(url));
     },
 };

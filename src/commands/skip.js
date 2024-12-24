@@ -7,10 +7,10 @@ module.exports = {
         .setDescription('skip the current song'),
 
     async execute(interaction){
-        let playerManager = PlayerManager.getPlayer();
+        let PlayerManager = PlayerManager.getPlayer();
 
-        playerManager.stopSong();
-        await playerManager.playSong(playerManager.queue.nextSong());
+        PlayerManager.stopSong();
+        await PlayerManager.playSong(PlayerManager.queue.nextSong());
 
         if(interaction) interaction.reply('La musique a été passée.');
     },

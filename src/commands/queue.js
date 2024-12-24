@@ -7,8 +7,8 @@ module.exports = {
         .setDescription('Affiche la file d\'attente de la musique'),
 
     execute(interaction) {
-        let playerManager = PlayerManager.getPlayer();
-        let queue = playerManager.queue;
+        let PlayerManager = PlayerManager.getPlayer();
+        let queue = PlayerManager.queue;
 
         if (queue.getQueueSize() === 0) {
             interaction.reply('La file d\'attente est vide');

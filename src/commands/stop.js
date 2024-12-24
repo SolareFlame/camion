@@ -7,9 +7,9 @@ module.exports = {
         .setDescription('stop the current song'),
 
     execute(interaction){
-        let playerManager = PlayerManager.getPlayer();
+        let PlayerManager = PlayerManager.getPlayer();
 
-        playerManager.stopSong();
+        PlayerManager.stopSong();
 
         if(interaction) interaction.reply('La musique a été stoppée.');
     },

@@ -7,12 +7,12 @@ module.exports = {
         .setDescription('pause the current song'),
 
     execute(interaction ) {
-        let playerManager = PlayerManager.getPlayer();
+        let PlayerManager = PlayerManager.getPlayer();
 
-        if(playerManager.status() === 'paused') {
+        if(PlayerManager.status() === 'paused') {
             interaction.reply('The song is already paused');
         }
 
-        playerManager.pauseSong();
+        PlayerManager.pauseSong();
     },
 };
