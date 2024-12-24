@@ -156,15 +156,15 @@ class PlayerManager {
         });
     }
 
-    async preparePlaying(url) {
+    async preparePlaying(url, when) {
         if (!this.connection) {
             console.error('Vous devez être connecté à un canal vocal pour jouer de la musique.');
             return;
         }
+        let directPlay = false;
 
         try {
             if (url.includes('playlist')) {
-                let directPlay = false;
                 const playlist = await PlaylistExtractor.getPlaylistURLs(url);
 
                 if (this.state === PlayerManager.STATE.IDLE && this.queue.isEmpty()) {
@@ -180,13 +180,23 @@ class PlayerManager {
                 const returnValue = directPlay ? 1 : 2;
 
                 setTimeout(() => this.prepareQueue(playlist), 0);
-                return returnValue;
+                return returnValue; 
             } else {
-                let directPlay = false;
                 let song = new Song(url);
 
                 if (this.state === PlayerManager.STATE.PLAYING) {
-                    this.queue.addToQueue(song);
+                    switch (when) {
+                        case 'now':
+                            this.stopSong();
+                            this.playSong(song);
+                            break;
+                        case 'next':
+                            this.queue.addToQueueNext(song);
+                            break;
+                        default:
+                            this.queue.addToQueue(song);
+                            break;
+                    }
                 }
 
                 if (this.state === PlayerManager.STATE.IDLE && this.queue.isEmpty()) {
