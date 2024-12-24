@@ -9,7 +9,7 @@ describe('QueueManager', () => {
     });
 
     it('should initialize an empty queue', () => {
-        const queue = queueManager.getQueue();
+        const queue = queueManager.queue;
         expect(queue).toEqual([]);
     });
 
@@ -17,7 +17,7 @@ describe('QueueManager', () => {
         const song = new Song('Song Title', 'http://example.com/song', 'User1');
 
         queueManager.addToQueue(song);
-        const queue = queueManager.getQueue();
+        const queue = queueManager.queue;
 
         expect(queue.length).toBe(1);
         expect(queue[0]).toEqual(song);
@@ -32,7 +32,7 @@ describe('QueueManager', () => {
 
         queueManager.removeFromQueue(0); // Supprime la première chanson
 
-        const queue = queueManager.getQueue();
+        const queue = queueManager.queue;
         expect(queue.length).toBe(1);
         expect(queue[0]).toEqual(song2);
     });
@@ -48,7 +48,7 @@ describe('QueueManager', () => {
 
         queueManager.moveInQueue(3,1);
 
-        const queue = queueManager.getQueue();
+        const queue = queueManager.queue;
         expect(queue[0]).toEqual(song3);
         expect(queue[1]).toEqual(song1);
         expect(queue[2]).toEqual(song2);
@@ -65,7 +65,7 @@ describe('QueueManager', () => {
         songs.forEach(song => queueManager.addToQueue(song));
         queueManager.shuffleQueue();
 
-        const queue = queueManager.getQueue();
+        const queue = queueManager.queue;
 
         // Vérifie que toutes les chansons sont présentes mais dans un ordre différent
         expect(queue.length).toBe(songs.length);
@@ -83,7 +83,7 @@ describe('QueueManager', () => {
         queueManager.addToQueue(song);
         queueManager.clearQueue();
 
-        const queue = queueManager.getQueue();
+        const queue = queueManager.queue;
         expect(queue).toEqual([]);
     });
 
