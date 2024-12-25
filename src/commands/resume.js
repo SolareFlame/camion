@@ -10,8 +10,10 @@ module.exports = {
     execute(interaction){
         let pm = PlayerManager.getPlayer();
 
-        if(pm.status === PlayerManager.STATE.PLAYING && !interaction.isButton()) {
-            interaction.reply('The song is already playing');
+        if(pm.status === PlayerManager.STATE.PLAYING) {
+            if(!interaction.isButton()) interaction.reply('The song is already playing');
+            interaction.deferUpdate();
+            return;
         }
 
         pm.resumeSong();

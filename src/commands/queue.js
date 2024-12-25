@@ -8,12 +8,11 @@ module.exports = {
 
     execute(interaction) {
         let pm = PlayerManager.getPlayer();
-        let queue = pm.queue;
 
-        if (queue.getQueueSize() === 0) {
+        if (pm.queue.isEmpty()) {
             interaction.reply('La file d\'attente est vide');
         }
 
-        interaction.reply(queue.displayQueue(1));
+        interaction.reply(pm.queue.displayQueue(1));
     },
 };

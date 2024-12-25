@@ -10,6 +10,12 @@ module.exports = {
     async execute(interaction){
         let pm = PlayerManager.getPlayer();
 
+        if(pm.queue.isEmpty()) {
+            if(!interaction.isButton()) interaction.reply('La file d\'attente est vide.');
+            interaction.deferUpdate();
+            return;
+        }
+
         pm.stopSong();
         await pm.playSong(PlayerManager.queue.nextSong());
 

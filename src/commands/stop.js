@@ -9,6 +9,12 @@ module.exports = {
     execute(interaction){
         let pm = PlayerManager.getPlayer();
 
+        if(pm.status === PlayerManager.STATE.IDLE) {
+            if(!interaction.isButton()) interaction.reply('There is no song to stop');
+            interaction.deferUpdate();
+            return;
+        }
+
         pm.stopSong();
 
         if(interaction) interaction.reply('La musique a été stoppée.');
