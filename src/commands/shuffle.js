@@ -8,6 +8,13 @@ module.exports = {
 
     execute(interaction) {
         let pm = PlayerManager.getPlayer();
+
+        if(pm.queue.isEmpty()) {
+            if(!interaction.isButton()) interaction.reply('La file d\'attente est vide.');
+            interaction.deferUpdate();
+            return;
+        }
+
         pm.queue.shuffleQueue();
 
         if(interaction) interaction.reply('La file d\'attente a été mélangée.');
