@@ -1,11 +1,14 @@
 const { joinVoiceChannel, createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus } = require('@discordjs/voice');
-const { VoiceChannel, EmbedBuilder} = require("discord.js");
 const QueueManager = require("./QueueManager");
-const PlaylistExtractor = require("../extractor/PlaylistExtractor");
-const Song = require("./Song");
-const PlayerMessage = require("../embed/PlayerEmbed");
+const {createAudioStream} = require("./AudioManager");
 
 class PlayerManager {
+    static STATE = Object.freeze({
+        IDLE: '0',
+        PLAYING: '1',
+        PAUSED: '2',
+    });
+
     #player;
     #connection;
     #song;
@@ -19,6 +22,8 @@ class PlayerManager {
 
         this.loop = false;
 
+        this.status = PlayerManager.STATE.IDLE;
+
         this.player.on(AudioPlayerStatus.Idle, () => {
             if (this.queue.isEmpty()) {
                 console.log('[AUDIO PLAYER] : Queue is empty');
@@ -31,8 +36,9 @@ class PlayerManager {
     }
 
     static getPlayer() {
-        if (!PlayerManager.instance) {
+        if (!PlayerManager.instance || PlayerManager.instance === null) {
             PlayerManager.instance = new PlayerManager();
+            console.log('[AUDIO PLAYER] : New instance created');
         }
         return PlayerManager.instance;
     }
@@ -48,6 +54,7 @@ class PlayerManager {
         }
 
         try {
+            this.status = PlayerManager.STATE.PLAYING;
             const resource =  await createAudioStream(song.url);
 
             this.song = song;
@@ -62,16 +69,19 @@ class PlayerManager {
     }
 
     pauseSong() {
+        this.status = PlayerManager.STATE.PAUSED;
         this.player.pause();
         console.log('[AUDIO PLAYER] : Paused');
     }
 
     resumeSong() {
+        this.status = PlayerManager.STATE.PLAYING;
         this.player.unpause();
         console.log('[AUDIO PLAYER] : Resumed');
     }
 
     stopSong() {
+        this.status = PlayerManager.STATE.IDLE;
         this.player.stop();
         console.log('[AUDIO PLAYER] : Stopped');
     }
@@ -106,13 +116,9 @@ class PlayerManager {
         });
     }
 
-
-    status() {
-        if (!this.connection) return 'not_connected';
-        if (this.player.state.status === AudioPlayerStatus.Idle) return 'idle';
-        if (this.player.state.status === AudioPlayerStatus.Paused) return 'paused';
-        if (this.player.state.status === AudioPlayerStatus.Playing) return 'playing';
-        return 'unknown';
+    getDuration() {
+        if (this.player.state.resource === undefined) return 0;
+        return this.player.state.resource.playbackDuration;
     }
 }
 
