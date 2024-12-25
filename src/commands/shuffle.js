@@ -7,8 +7,8 @@ module.exports = {
         .setDescription('shuffle the current song'),
 
     execute(interaction) {
-        let PlayerManager = PlayerManager.getPlayer();
-        PlayerManager.queue.shuffleQueue();
+        let pm = PlayerManager.getPlayer();
+        pm.queue.shuffleQueue();
 
         if(interaction) interaction.reply('La file d\'attente a été mélangée.');
     },
