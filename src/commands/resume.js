@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const PlayerManager = require("../utils/PlayerManager");
+const EmbedManager = require("../embed/EmbedManager");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,12 +8,16 @@ module.exports = {
         .setDescription('resume the current song'),
 
     execute(interaction){
-        let PlayerManager = PlayerManager.getPlayer();
+        let pm = PlayerManager.getPlayer();
 
-        if(PlayerManager.status() === 'playing') {
+        if(pm.status === PlayerManager.STATE.PLAYING && !interaction.isButton()) {
             interaction.reply('The song is already playing');
         }
 
-        PlayerManager.resumeSong();
+        pm.resumeSong();
+
+        // Embed
+        let em = new EmbedManager(interaction, null);
+        em.update(pm);
     },
 };
