@@ -1,11 +1,11 @@
-import { spawn } from 'child_process';
-import {AudioResource, createAudioResource, StreamType} from '@discordjs/voice';
-import { PassThrough } from 'stream';
+const { PassThrough } = require('stream');
+const { createAudioResource, StreamType } = require('@discordjs/voice');
+const { spawn } = require('child_process');
 
 /**
  * @param url
  */
-export async function createAudioStream(url){
+async function createAudioStream(url){
     try {
         console.log(`[AUDIOSTREAM] : New audio stream created from ${url}`);
 
@@ -28,7 +28,6 @@ export async function createAudioStream(url){
                 audioStream.end();
             }
         });
-
 
 
         const ffmpegProcess = spawn('ffmpeg', [
@@ -66,3 +65,5 @@ export async function createAudioStream(url){
         throw error;
     }
 }
+
+module.exports = { createAudioStream };
