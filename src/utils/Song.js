@@ -15,15 +15,16 @@ class Song {
      */
     async update() {
         try {
-            const details = await SongDataExtractor.extractDetails(this);
+            console.log(`[SONG UPDATE] : Updating song ${this.url}`);
+
+            const details = await SongDataExtractor.extractDetails(this.url);
+
             this.title = details.title;
             this.artist = details.artist;
             this.duration = details.duration;
             this.thumbnail = details.thumbnail;
-
-            console.log(`Mise à jour réussie : ${this.title} par ${this.artist}, durée ${this.duration}`);
         } catch (error) {
-            console.error(`Erreur lors de la mise à jour du Song : ${error}`);
+            console.error(`[SONG UPDATE] ${error}`);
         }
     }
 }
