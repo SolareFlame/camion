@@ -64,7 +64,7 @@ class EmbedManager {
 
         buttons.addComponents(
             new ButtonBuilder()
-                .setCustomId("next")
+                .setCustomId("skip")
                 .setStyle(ButtonStyle.Danger)
                 .setEmoji(EmbedManager.STATE.BTN_NEXT)
         );
@@ -85,7 +85,7 @@ class EmbedManager {
 
         buttons.addComponents(
             new ButtonBuilder()
-                .setCustomId(pm.loop ? "unloop" : "loop")
+                .setCustomId("loop")
                 .setStyle(ButtonStyle.Danger)
                 .setEmoji(pm.loop ? EmbedManager.STATE.BTN_UNLOOP : EmbedManager.STATE.BTN_LOOP)
         );
