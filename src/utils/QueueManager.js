@@ -82,6 +82,14 @@ class QueueManager {
     isEmpty() {
         return this.queue.length === 0;
     }
+
+    updateQueue() {
+        this.queue.forEach((song) => {
+            setTimeout(() => {
+                song.update();
+            }, 500);
+        });
+    }
 }
 
 module.exports = QueueManager;

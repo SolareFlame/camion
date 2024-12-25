@@ -1,14 +1,18 @@
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
 
 /**
  * Extrait les détails d'une vidéo YouTube.
- * @returns {Promise<Object>} Une promesse contenant les détails de la vidéo : artiste, titre, durée.
- * @param url
+ * @param {string} url - URL de la vidéo YouTube.
+ * @returns {Promise<Object>} Une promesse contenant les détails de la vidéo.
  */
 async function extractDetails(url) {
     console.log(`[SONGDATA EXT] : Extracting details from ${url}`);
 
-    const process = spawn('yt-dlp', ['-J', url]);
+    const process = spawn('yt-dlp', [
+        '--print',
+        '{"artist": "%(artist|)s", "title": "%(title|)s", "duration": "%(duration|)s", "thumbnail": "%(thumbnail|)s"}',
+        url,
+    ]);
 
     let output = '';
     let error = '';
@@ -25,27 +29,19 @@ async function extractDetails(url) {
         process.on('close', (code) => {
             if (code === 0) {
                 try {
-                    const jsonOutput = JSON.parse(output);
-
-                    const details = {
-                        artist: jsonOutput.artist || null,
-                        title: jsonOutput.title || null,
-                        duration: jsonOutput.duration || null,
-                        thumbnail: jsonOutput.thumbnail || null,
-                    };
+                    const details = JSON.parse(output);
 
                     console.log(`[SONGDATA EXT] : Details extracted : ${details.artist} - ${details.title} (${details.duration})`);
 
                     resolve(details);
                 } catch (err) {
-                    reject(`[SONGDATA EXT] : ${err}`);
+                    reject(`[SONGDATA EXT] : Parsing error - ${err}`);
                 }
             } else {
-                reject(`[SONGDATA EXT] : ${error}`);
+                reject(`[SONGDATA EXT] : Error - ${error}`);
             }
         });
     });
 }
 
-
-module.exports = {extractDetails};
+module.exports = { extractDetails };
