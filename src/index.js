@@ -26,6 +26,8 @@ client.once('ready', async () => {
 
     try {
         const commands = commandFiles.map(file => {
+            console.log(`[INDEX] : Enregistrement de la commande ${file}`);
+
             const command = require(`./commands/${file}`);
             client.commands.set(command.data.name, command);
             return command.data.toJSON();
@@ -35,19 +37,27 @@ client.once('ready', async () => {
             body: commands,
         });
 
-        console.log('Toutes les commandes ont été enregistrées avec succès.');
+        console.log('[INDEX] : Toutes les commandes ont été enregistrées avec succès.');
     } catch (error) {
-        console.error('Erreur lors de l\'enregistrement des commandes:', error);
+        console.error('[INDEX] : Erreur lors de l\'enregistrement des commandes:', error);
     }
 });
 
 client.on('interactionCreate', async (interaction) => {
     if(interaction.isButton()) {
-        const buttonManager = require("./embed/ButtonManager");
-        await buttonManager.execute(interaction);
+        const btn = client.commands.get(interaction.customId);
+        if (!btn) return;
 
-        console.log("Button clicked");
+        try {
+            console.log('[BUTTON] : Exectution de la commande : ' + btn.data.name);
+
+            await btn.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if(interaction) await interaction.editReply({ content: 'Il y a eu une erreur lors de l\'exécution de la commande.', ephemeral: true });
+        }
     }
+
     if (!interaction.isCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
@@ -57,7 +67,7 @@ client.on('interactionCreate', async (interaction) => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        if(interaction) await interaction.reply({ content: 'Il y a eu une erreur lors de l\'exécution de la commande.', ephemeral: true });
+        if(interaction) await interaction.editReply({ content: 'Il y a eu une erreur lors de l\'exécution de la commande.', ephemeral: true });
     }
 });
 
