@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const PlayerManager = require("../utils/PlayerManager");
 const Song = require("../utils/Song");
+const EmbedManager = require("../embed/EmbedManager");
+const PlaylistExtractor = require("../extractor/PlaylistExtractor");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -25,8 +27,12 @@ module.exports = {
 
     async execute(interaction) {
         let url = interaction.options.getString('url').split("&")[0];
-
         const channel = interaction.member.voice.channel;
+
+        if(url === "test") {
+            console.log('[COMMAND PLAY] : Test URL');
+            url = "https://music.youtube.com/watch?v=dvuhQEDXvN8&si=xzTLU9qnmKWiUuEq";
+        }
 
         if (!url.includes('youtube') && !url.includes('youtu.be')) {
             console.log('[COMMAND PLAY] : Invalid URL');
@@ -41,10 +47,58 @@ module.exports = {
 
         await interaction.deferReply({ephemeral: false});
 
-        // Connect
-        let PlayerManager = PlayerManager.getPlayer();
+        let pm = await PlayerManager.getPlayer();
 
-        PlayerManager.connect(channel);
-        await PlayerManager.playSong(new Song(url));
+        pm.connect(channel);
+        let song;
+
+        // Playlist
+        if (url.includes('list=')) {
+            console.log('[COMMAND PLAY] : Playlist detected');
+
+            let playlist = await PlaylistExtractor.getPlaylistURLs(url)
+            playlist.forEach((url) => {
+                let s = new Song(url);
+                pm.queue.addToQueue(s);
+            });
+
+            song = pm.queue.nextSong();
+        } else {
+            song = new Song(url);
+        }
+
+        // When
+        switch (interaction.options.getString('when')) {
+            case 'now':
+                console.log('[COMMAND PLAY] : Play now');
+
+                pm.queue.addToQueueNext(song);
+                pm.stopSong();
+                await pm.playSong(song);
+                break;
+            case 'next':
+                console.log('[COMMAND PLAY] : Play next');
+
+                pm.queue.addToQueueNext(song);
+                break;
+            default:
+                if(pm.status !== PlayerManager.STATE.PLAYING) {
+                    console.log('[COMMAND PLAY] : Play last (now)');
+
+                    pm.playSong(song);
+                } else {
+                    console.log('[COMMAND PLAY] : Play last (queue)');
+
+                    pm.queue.addToQueue(song);
+                }
+        }
+
+        // Embed
+        let em = new EmbedManager(interaction, channel);
+        song.update().then(() => {
+            pm.song = song;
+
+            em.update(pm);
+        });
     },
 };
