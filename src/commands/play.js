@@ -34,6 +34,12 @@ module.exports = {
             url = "https://music.youtube.com/watch?v=dvuhQEDXvN8&si=xzTLU9qnmKWiUuEq";
         }
 
+        if(url === "testq") {
+            console.log('[COMMAND PLAY] : Test URL QUEUE');
+            url = "https://music.youtube.com/playlist?list=PLW92JgLEohgdlBbyFddr5H8Kr2NNmWm9b&si=bLgyGHT9cacIwcXz";
+        }
+
+
         if (!url.includes('youtube') && !url.includes('youtu.be')) {
             console.log('[COMMAND PLAY] : Invalid URL');
             interaction.reply({content: 'URL invalide !', ephemeral: true});
@@ -100,5 +106,9 @@ module.exports = {
 
             em.update(pm);
         });
+
+        setTimeout(() => {
+            pm.queue.updateQueue();
+        }, 5000);
     },
 };
