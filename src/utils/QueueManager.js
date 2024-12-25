@@ -11,6 +11,10 @@ class QueueManager {
         this.queue.push(song);
     }
 
+    addToQueueNext(song) {
+        this.queue.splice(1, 0, song);
+    }
+
     removeFromQueue(index) {
         if (index < 0 || index >= this.queue.length) return;
         this.queue.splice(index, 1);
