@@ -8,9 +8,9 @@ module.exports = {
         .setDescription('bye'),
 
     async execute(interaction) {
-        const PlayerManager = PlayerManager.getPlayer();
-        await PlayerManager.stopSong();
-        await PlayerManager.disconnect();
+        const pm = PlayerManager.getPlayer();
+        await pm.stopSong();
+        await pm.disconnect();
 
         if (interaction) {
             interaction.reply('La musique a été stoppée et je me suis déconnecté.');
