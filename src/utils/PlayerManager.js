@@ -1,12 +1,14 @@
 const { joinVoiceChannel, createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus } = require('@discordjs/voice');
 const QueueManager = require("./QueueManager");
 const {createAudioStream} = require("./AudioManager");
+const {updateEmbed} = require("../embed/EmbedManager");
+const EmbedManager = require("../embed/EmbedManager");
 
 class PlayerManager {
     static STATE = Object.freeze({
-        IDLE: '0',
-        PLAYING: '1',
-        PAUSED: '2',
+        IDLE: 0,
+        PLAYING: 1,
+        PAUSED: 2,
     });
 
     #player;
@@ -21,16 +23,28 @@ class PlayerManager {
         this.queue = new QueueManager();
 
         this.loop = false;
-
         this.status = PlayerManager.STATE.IDLE;
 
         this.player.on(AudioPlayerStatus.Idle, () => {
+            EmbedManager.getEmbed().updateEnd(this, null);
+            console.log('[AUDIO PLAYER] : Song ended --> AUTO UPDATING');
+
+            if(this.loop) {
+                console.log('[AUDIO PLAYER] : Looping current song');
+                this.playSong(this.song);
+
+                EmbedManager.getEmbed().update(this, null);
+                return;
+            }
+
             if (this.queue.isEmpty()) {
                 console.log('[AUDIO PLAYER] : Queue is empty');
             } else {
                 console.log('[AUDIO PLAYER] : Automatic skipping to next song');
                 let song = this.queue.nextSong();
                 this.playSong(song);
+
+                EmbedManager.getEmbed().update(this, null);
             }
         });
     }
@@ -54,10 +68,10 @@ class PlayerManager {
         }
 
         try {
-            this.status = PlayerManager.STATE.PLAYING;
-            const resource =  await createAudioStream(song.url);
-
             this.song = song;
+            this.status = PlayerManager.STATE.PLAYING;
+
+            const resource =  await createAudioStream(song.url);
             this.connection.subscribe(this.player);
 
             this.player.play(resource);
@@ -82,7 +96,7 @@ class PlayerManager {
 
     stopSong() {
         this.status = PlayerManager.STATE.IDLE;
-        this.player.stop();
+        this.player.stop(true);
         console.log('[AUDIO PLAYER] : Stopped');
     }
 

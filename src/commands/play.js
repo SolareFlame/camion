@@ -36,7 +36,7 @@ module.exports = {
 
         if(url === "testq") {
             console.log('[COMMAND PLAY] : Test URL QUEUE');
-            url = "https://music.youtube.com/playlist?list=PLW92JgLEohgdlBbyFddr5H8Kr2NNmWm9b&si=bLgyGHT9cacIwcXz";
+            url = "https://music.youtube.com/playlist?list=OLAK5uy_kMj2M0Od8IUPbLy-S9ZxOpPCCiTChBAlU&si=h-ClMCZSSsoP7b4s";
         }
 
 
@@ -68,12 +68,24 @@ module.exports = {
                 pm.queue.addToQueue(s);
             });
 
-            song = pm.queue.nextSong();
-        } else {
-            song = new Song(url);
+            pm.queue.updateQueue();
+
+            if(pm.status !== PlayerManager.STATE.PLAYING) {
+                song = pm.queue.nextSong();
+
+                await pm.playSong(song);
+
+                song.updateSong().then(() => {
+                    pm.song = song;
+                    EmbedManager.getEmbed().update(pm, interaction);
+                });
+                return;
+            }
         }
 
-        // When
+        song = new Song(url);
+
+        // When (playing)
         switch (interaction.options.getString('when')) {
             case 'now':
                 console.log('[COMMAND PLAY] : Play now');
@@ -81,34 +93,42 @@ module.exports = {
                 pm.queue.addToQueueNext(song);
                 pm.stopSong();
                 await pm.playSong(song);
+
+                song.updateSong().then(() => {
+                    pm.song = song;
+                    EmbedManager.getEmbed().update(pm, interaction);
+                });
+
                 break;
             case 'next':
                 console.log('[COMMAND PLAY] : Play next');
 
-                pm.queue.addToQueueNext(song);
+                pm.queue.addToQueueNext(song)
+
+                song.updateSong().then(() => {
+                    interaction.editReply({content: `Ajouté à la file d'attente : ${song.title} - ${song.artist}`});
+                });
+
                 break;
             default:
                 if(pm.status !== PlayerManager.STATE.PLAYING) {
                     console.log('[COMMAND PLAY] : Play last (now)');
+                    pm.playSong(song)
 
-                    pm.playSong(song);
+                    song.updateSong().then(() => {
+                        pm.song = song;
+                        EmbedManager.getEmbed().update(pm, interaction);
+                    });
+
                 } else {
                     console.log('[COMMAND PLAY] : Play last (queue)');
 
                     pm.queue.addToQueue(song);
+
+                    song.updateSong().then(() => {
+                        interaction.editReply({content: `Ajouté à la file d'attente : ${song.title} - ${song.artist}`});
+                    });
                 }
         }
-
-        // Embed
-        let em = new EmbedManager(interaction, channel);
-        song.update().then(() => {
-            pm.song = song;
-
-            em.update(pm);
-        });
-
-        setTimeout(() => {
-            pm.queue.updateQueue();
-        }, 5000);
     },
 };
