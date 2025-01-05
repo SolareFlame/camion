@@ -13,10 +13,8 @@ class Song {
      * Met à jour les détails du Song en utilisant SongDataExtractor.
      * @returns {Promise<void>}
      */
-    async update() {
+    async updateSong() {
         try {
-            console.log(`[SONG UPDATE] : Updating song ${this.url}`);
-
             const details = await SongDataExtractor.extractDetails(this.url);
 
             this.title = details.title;
