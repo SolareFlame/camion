@@ -50,6 +50,11 @@ CAMION is a Discord bot designed to play music directly from **YouTube Music**. 
 
 ---
 
+### Why "CAMION" 🚚
+I don't really know myself, the name just looks nice 🤷
+
+---
+
 ## License 📄
 
 This project is licensed under the [MIT](./LICENSE) license.
@@ -59,3 +64,4 @@ This project is licensed under the [MIT](./LICENSE) license.
 ## Author 👤
 
 Developed with ❤️ by **Solare**. For any questions or suggestions, feel free to contact me!
+
