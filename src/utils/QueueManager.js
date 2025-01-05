@@ -85,9 +85,7 @@ class QueueManager {
 
     updateQueue() {
         this.queue.forEach((song) => {
-            setTimeout(() => {
-                song.update();
-            }, 500);
+            song.updateSong();
         });
     }
 }
