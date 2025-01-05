@@ -51,7 +51,7 @@ CAMION is a Discord bot designed to play music directly from **YouTube Music**. 
 ---
 
 ### Why "CAMION" 🚚
-I don't really know myself, the name just looks nice 🤷
+I don't really know myself, the name just looks nice 🤷 (Connectable Audio Music with Interactive Operator and Normalizer)
 
 ---
 
