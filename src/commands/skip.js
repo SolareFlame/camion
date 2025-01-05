@@ -17,10 +17,8 @@ module.exports = {
         }
 
         pm.stopSong();
-        await pm.playSong(PlayerManager.queue.nextSong());
+        await pm.playSong(pm.queue.nextSong());
 
-        // Embed
-        let em = new EmbedManager(interaction, null);
-        em.update(pm);
+        EmbedManager.getEmbed().update(pm, interaction);
     },
 };

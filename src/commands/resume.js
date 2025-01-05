@@ -18,8 +18,6 @@ module.exports = {
 
         pm.resumeSong();
 
-        // Embed
-        let em = new EmbedManager(interaction, null);
-        em.update(pm);
+        EmbedManager.getEmbed().update(pm, interaction);
     },
 };

@@ -18,8 +18,6 @@ module.exports = {
 
         pm.loop = !pm.loop;
 
-        // Embed
-        let em = new EmbedManager(interaction, null);
-        em.update(pm);
+        EmbedManager.getEmbed().update(pm, interaction);
     },
 };
