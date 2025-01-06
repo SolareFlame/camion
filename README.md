@@ -23,8 +23,9 @@ CAMION is a Discord bot designed to play music directly from **YouTube Music**. 
 2. Install dependencies
 3. Configure environment variables in the `.env` file at the root of the project:
    ```
-   DISCORD_TOKEN=your-discord-bot-token
-   YOUTUBE_API_KEY=your-youtube-api-key
+   DISCORD_TOKEN=
+   CLIENT_ID=
+   GUILD_ID=
    ```
 
 4. Run the bot:
