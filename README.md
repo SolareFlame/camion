@@ -1,5 +1,7 @@
 # CAMION - Discord Bot for Youtube Music 🎵
 
+![CAMION Bot](https://preview.redd.it/mpvc156pdso51.jpg?auto=webp&s=e159b0cc3c6b3ec1ba71b6c9f4de133e50813e1e)
+
 CAMION is a Discord bot designed to play music directly from **YouTube Music**. With its powerful features and modular architecture, it offers a smooth audio experience for Discord servers.
 
 ## Main Features 🚀
