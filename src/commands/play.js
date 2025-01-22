@@ -3,6 +3,7 @@ const PlayerManager = require("../utils/PlayerManager");
 const Song = require("../utils/Song");
 const EmbedManager = require("../embed/EmbedManager");
 const PlaylistExtractor = require("../extractor/PlaylistExtractor");
+const { getUrlFromJson } = require("../extractor/LibExtractor");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -29,16 +30,7 @@ module.exports = {
         let url = interaction.options.getString('url').split("&")[0];
         const channel = interaction.member.voice.channel;
 
-        if(url === "test") {
-            console.log('[COMMAND PLAY] : Test URL');
-            url = "https://music.youtube.com/watch?v=dvuhQEDXvN8&si=xzTLU9qnmKWiUuEq";
-        }
-
-        if(url === "testq") {
-            console.log('[COMMAND PLAY] : Test URL QUEUE');
-            url = "https://music.youtube.com/playlist?list=OLAK5uy_kMj2M0Od8IUPbLy-S9ZxOpPCCiTChBAlU&si=h-ClMCZSSsoP7b4s";
-        }
-
+        url = getUrlFromJson(url);
 
         if (!url.includes('youtube') && !url.includes('youtu.be')) {
             console.log('[COMMAND PLAY] : Invalid URL');
