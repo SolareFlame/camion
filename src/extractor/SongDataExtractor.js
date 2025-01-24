@@ -1,16 +1,17 @@
 const { spawn } = require('child_process');
 
 /**
- * Extrait les détails d'une vidéo YouTube.
- * @param {string} url - URL de la vidéo YouTube.
- * @returns {Promise<Object>} Une promesse contenant les détails de la vidéo.
+ * Extrait les détails d'une playlist YouTube.
+ * @param {string} url - URL de la playlist YouTube.
+ * @returns {Promise<Array>} Une promesse contenant les détails des vidéos de la playlist.
  */
 async function extractDetails(url) {
-    console.log(`[SONGDATA EXT] : Extracting details from ${url}`);
+    console.log(`[PLAYLIST EXT] : Extracting details from ${url}`);
 
     const process = spawn('yt-dlp', [
-        '--print',
-        '{"artist": "%(artist|)s", "title": "%(title|)s", "duration": "%(duration|)s", "thumbnail": "%(thumbnail|)s"}',
+        '--dump-json',
+        '--skip-download',
+        '--flat-playlist',
         url,
     ]);
 
@@ -25,23 +26,84 @@ async function extractDetails(url) {
         error += data.toString();
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         process.on('close', (code) => {
             if (code === 0) {
                 try {
-                    const details = JSON.parse(output);
+                    const details = output
+                        .trim()
+                        .split('\n')
+                        .map((line) => JSON.parse(line))
+                        .map((video) => ({
+                            title: video.title || 'Unknown Title',
+                            duration: video.duration || 0,
+                            artist: video.uploader || 'Unknown Artist',
+                            thumbnail: video.thumbnail || null,
+                        }));
 
-                    console.log(`[SONGDATA EXT] : Details extracted : ${details.artist} - ${details.title} (${details.duration})`);
-
+                    console.log(`[PLAYLIST EXT] : ${details.length} videos extracted.`);
                     resolve(details);
+
+                    console.log(details);
+
                 } catch (err) {
-                    reject(`[SONGDATA EXT] : Parsing error - ${err}`);
+                    console.error(`[PLAYLIST EXT] : Parsing error - ${err}`);
+                    resolve([]);
                 }
             } else {
-                reject(`[SONGDATA EXT] : Error - ${error}`);
+                console.error(`[PLAYLIST EXT] : Error - ${error}`);
+                resolve([]);
             }
         });
     });
 }
 
-module.exports = { extractDetails };
+/**
+ * Extrait la miniature d'une vidéo YouTube
+ * @param url - URL de la vidéo YouTube.
+ * @returns {Promise<void>}
+ */
+
+async function extractThumbnail(url) {
+    console.log(`[THUMBNAIL EXT] : Extracting thumbnail from ${url}`);
+
+    const process = spawn('yt-dlp', [
+        '--dump-json',
+        '--skip-download',
+        url,
+    ]);
+
+    let output = '';
+    let error = '';
+
+    process.stdout.on('data', (data) => {
+        output += data.toString();
+    });
+
+    process.stderr.on('data', (data) => {
+        error += data.toString();
+    });
+
+    return new Promise((resolve) => {
+        process.on('close', (code) => {
+            if (code === 0) {
+                try {
+                    const videoData = JSON.parse(output.trim());
+                    const thumbnail = videoData.thumbnail || null;
+
+                    console.log(`[THUMBNAIL EXT] : Thumbnail extracted: ${thumbnail}`);
+                    resolve(thumbnail);
+                } catch (err) {
+                    console.error(`[THUMBNAIL EXT] : Parsing error - ${err}`);
+                    resolve(null);
+                }
+            } else {
+                console.error(`[THUMBNAIL EXT] : Error - ${error}`);
+                resolve(null);
+            }
+        });
+    });
+}
+
+module.exports = { extractDetails, extractThumbnail };
+
