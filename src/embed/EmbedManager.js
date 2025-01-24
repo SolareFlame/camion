@@ -31,7 +31,7 @@ class EmbedManager {
         return EmbedManager.instance;
     }
 
-    update(pm, interaction) {
+    async update(pm, interaction) {
         console.log("[EMBED] Updating embed...");
         console.log("[EMBED] Current song:", pm.song?.title || "Unknown");
 
@@ -42,6 +42,10 @@ class EmbedManager {
         let song = pm.song;
         let progress = pm.getDuration() / 1000;
         let desc = `(${this.getFormattedDuration(progress)}) ${this.getSeekBar(progress, song.duration, 9)} (${this.getFormattedDuration(song.duration)})`;
+
+        if(song.thumbnail === null) {
+            await song.updateThumbnail();
+        }
 
         let embed = new EmbedBuilder()
             .setAuthor({
