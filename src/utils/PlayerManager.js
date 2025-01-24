@@ -66,6 +66,9 @@ class PlayerManager {
             console.error('[AUDIO PLAYER] : Already playing');
             return;
         }
+        if(!song) {
+            console.error('[AUDIO PLAYER] : No song');
+        }
 
         try {
             this.song = song;
