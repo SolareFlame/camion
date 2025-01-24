@@ -25,6 +25,24 @@ class Song {
             console.error(`[SONG UPDATE] ${error}`);
         }
     }
+
+    async updateSongExt(data) {
+        this.title = data.title;
+        this.artist = data.artist;
+        this.duration = data.duration;
+        this.thumbnail = data.thumbnail;
+    }
+
+    async updateThumbnail() {
+        console.log(`[SONG UPDATE] Updating thumbnail for ${this.url}`);
+
+
+        try {
+            this.thumbnail = await SongDataExtractor.extractThumbnail(this.url);
+        } catch (error) {
+            console.error(`[SONG UPDATE] ${error}`);
+        }
+    }
 }
 
 module.exports = Song;
