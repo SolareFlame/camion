@@ -64,7 +64,7 @@ class QueueManager {
             if(song.duration === 0) {
                 queueString += `${i + 1}. \`${song.url}\` (loading).\n`;
             } else {
-                queueString += `${i + 1}. [${song.title}](${song.url}) (${song.duration}).\n`;
+                queueString += `${i + 1}. [${song.title}] (${song.duration}).\n`; //(${song.url})
             }
         }
         return queueString;
@@ -81,12 +81,6 @@ class QueueManager {
 
     isEmpty() {
         return this.queue.length === 0;
-    }
-
-    updateQueue() {
-        this.queue.forEach((song) => {
-            song.updateSong();
-        });
     }
 }
 
